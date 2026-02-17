@@ -1,15 +1,17 @@
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
-export const signUp = async (req, res) => { 
+import { errorHandler } from "../utils/error.js"
+import e from "express"
+export const signUp = async (req, res, next) => { 
     const { name, email, password } = req.body
     try {
         
         if (!name || !email || !password) {
-            return res.status(400).json({ message: "All fields are required" })
+           throw errorHandler(400, "All fields are required")
         }
        const userExists = await User.findOne({ email })
-       if (userExists) {
-        return res.status(400).json({ message: "User already exists" })
+        if (userExists) {
+           throw  errorHandler(400, "User already exists")
        }
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
@@ -23,6 +25,6 @@ export const signUp = async (req, res) => {
     }
    
      catch (error) {
-        res.status(500).json({ message: error.message })
+        next(error)
     }
 }
