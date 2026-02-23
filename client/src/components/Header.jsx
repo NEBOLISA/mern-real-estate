@@ -1,7 +1,11 @@
 import { FaSearch } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { GiSpookyHouse } from 'react-icons/gi'
+import { useUser } from '../hooks/useUser'
 function Header() {
+  const { data: userData } = useUser()
+  const { user } = userData || {}
+ 
   return (
     <header className='bg-slate-200 shadow-md '>
       <div className='flex justify-between mx-auto items-center max-w-5xl p-3'>
@@ -45,18 +49,31 @@ function Header() {
               About
             </li>
           </Link>
-          <Link to='sign-in'>
-            <li
-              className='  relative w-fit cursor-pointer 
+          {!user ? (
+            <Link to='sign-in'>
+              <li
+                className='  relative w-fit cursor-pointer 
            after:absolute after:left-0 after:-bottom-1 
            after:h-0.5 after:w-0 
            after:bg-slate-600 
            after:transition-all after:duration-500 
            hover:after:w-full '
-            >
-              Sign in
-            </li>
-          </Link>
+              >
+                Sign in
+              </li>
+            </Link>
+          ) : (
+              <Link to='/profile'>
+            <img
+              src={
+                user.avatar ||
+                'https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2558760599.jpg'
+              }
+              alt={user.name}
+              className='w-6 h-6 rounded-full object-cover'
+                />
+                </Link>
+          )}
         </ul>
       </div>
     </header>
