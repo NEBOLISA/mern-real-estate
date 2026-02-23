@@ -1,10 +1,11 @@
-import { errorHandler } from "../utils/error"
+import { errorHandler } from "../utils/error.js"
 import jwt from "jsonwebtoken"
 
 export const verifyToken = (req, res, next) => {
     const token = req.cookies.token
+ 
     if (!token) {
-        return errorHandler(401, "Unauthorized")
+        return next(errorHandler(401, "Unauthorized"))
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import InputForm from '../components/Authentication/input-component'
 import { useSignUp } from '../hooks/useSignUp'
+import OAuth from '../components/Authentication/oauth'
 
 function SignUp() {
   const [formData, setFormData] = useState({})
@@ -52,6 +53,12 @@ function SignUp() {
       },
       onError: (error) => {
         setError(error.message)
+        if (error.message.includes("User already exists")) {
+          setTimeout(() => {
+            navigate('/sign-in')
+          }, 1000)
+          
+        }
       }
     })
   }
@@ -61,11 +68,10 @@ function SignUp() {
       <InputForm
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        // error={signUpMutation.isError}
-        // isLoading={signUpMutation.isPending}
         mutation = {signUpMutation}
         btnText={'sign up'}
       />
+      <OAuth/>
       <div className='flex gap-2 mt-5'>
         <p>Have an account?</p>
         <Link to='/sign-in'>
