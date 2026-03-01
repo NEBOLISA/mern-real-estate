@@ -68,35 +68,35 @@ export const updateUser = async (req, res,next) => {
   }
 }
 
-export const updateAvatar = async (req, res, next) => {
-  try {
-    const id = req.userId
-    if (!id) {
-      throw errorHandler(401, 'Unauthorized, please login')
-    }
-    const { imageUrl, publicId } = req.body
-    if (!imageUrl || !publicId) {
-      throw errorHandler(400, 'Image data missing')
-    }
-    const user = await User.findById(id)
+// export const updateAvatar = async (req, res, next) => {
+//   try {
+//     const id = req.userId
+//     if (!id) {
+//       throw errorHandler(401, 'Unauthorized, please login')
+//     }
+//     const { imageUrl, publicId } = req.body
+//     if (!imageUrl || !publicId) {
+//       throw errorHandler(400, 'Image data missing')
+//     }
+//     const user = await User.findById(id)
 
-    if (!user) {
-      throw errorHandler('404', 'User not found')
-    }
-    if (user.avatarPublicId) {
-      try {
-        await cloudinary.uploader.destroy(user.avatarPublicId)
-      } catch (err) {
-        console.log('Old avatar deletion failed:', err.message)
-      }
-    }
-    user.avatar = imageUrl
-    user.avatarPublicId = publicId
-    await user.save()
-    res
-      .status(200)
-      .json({ message: 'Avatar uploaded successfully', avatar: user.avatar })
-  } catch (error) {
-    next(error)
-  }
-}
+//     if (!user) {
+//       throw errorHandler('404', 'User not found')
+//     }
+//     if (user.avatarPublicId) {
+//       try {
+//         await cloudinary.uploader.destroy(user.avatarPublicId)
+//       } catch (err) {
+//         console.log('Old avatar deletion failed:', err.message)
+//       }
+//     }
+//     user.avatar = imageUrl
+//     user.avatarPublicId = publicId
+//     await user.save()
+//     res
+//       .status(200)
+//       .json({ message: 'Avatar uploaded successfully', avatar: user.avatar })
+//   } catch (error) {
+//     next(error)
+//   }
+// }

@@ -10,10 +10,10 @@ import { toast } from 'react-toastify'
 
 function Profile() {
   const { data: userData } = useUser()
-  console.log(userData?.user.provider)
+ 
   const updateMutation = useUpdateUser()
   const { isPending } = updateMutation
-  const [isUploadingDone, setIsUploadingDone] = useState(false)
+  //const [isUploadingDone, setIsUploadingDone] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [updateForm, setUpdateForm] = useState({})
@@ -35,6 +35,26 @@ const queryClient = useQueryClient()
       ...updateForm,
       [id]: value
     })
+  }
+  const displayMessage = (formFields) => {
+    const filteredFields = Object.keys(formFields).filter(field => field !== "publicId")
+    if (filteredFields.includes("password") && filteredFields.includes("email") && filteredFields.includes("name") && filteredFields.includes("avatar")) {
+      return toast.success("Profile updated successfully")
+    }
+    // if(Object.keys(formFields).length === 0 && photoFile) {
+    //   return toast.success("Avatar updated successfully")
+
+    // }
+    if (Object.keys(filteredFields).length === 1) {
+      const fieldName = filteredFields[0].charAt(0).toUpperCase() + filteredFields[0].slice(1)
+      return toast.success(`${fieldName} updated successfully`)
+    }
+    if (Object.keys(filteredFields).length > 1) {
+        const capitalizedFields = filteredFields.map(field => field.charAt(0).toUpperCase() + field.slice(1))
+        return toast.success(
+          `${capitalizedFields.join(', ')} updated successfully`
+        )
+      }
   }
   const uploadImage = async () => {
     if (!photoFile) {
@@ -67,6 +87,7 @@ const queryClient = useQueryClient()
       setIsUploading(false)
     }
   }
+  
   const handleFormSubmit = async (e) => {
     e.preventDefault()
     try {
@@ -85,14 +106,17 @@ const queryClient = useQueryClient()
       updateMutation.mutate(updateData, {
         onSuccess: async () => {
           if (photoFile) {
+
             setIsUploading(false)
-            setIsUploadingDone(true)
+           // setIsUploadingDone(true)
             setTimeout(() => {
-              setIsUploadingDone(false)
+            //  setIsUploadingDone(false)
               setUploadProgress(null)
             }, 2000)
           }
-          toast.success("Profile updated successfully")
+          
+          // toast.success("Profile updated successfully")
+          displayMessage(updateData)
           setPhotoFile(null)
           setUpdateForm({})
           setPreviewImage(null)
@@ -206,10 +230,10 @@ const queryClient = useQueryClient()
           />
         </label>
       </div>
-      <h2 className='text-center my-3 text-sm'>{uploadProgress > 0 && `${uploadProgress}%`}</h2>
-      <h3 className='text-center text-green-600 my-3 text-sm'>
-        {isUploadingDone && 'Image uploaded successfully'}
-      </h3>
+      <h2 className='text-center text-green-600 my-3 text-sm'>
+        {uploadProgress > 0 && `${uploadProgress}%`}
+      </h2>
+      
       <form onSubmit={handleFormSubmit} className='w-full'>
         <input
           type='text'
@@ -245,7 +269,7 @@ const queryClient = useQueryClient()
           type='submit'
           className='bg-slate-700 w-full mt-5 cursor-pointer text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
         >
-          {isPending ? (
+          {isUploading || isPending ? (
             <span className='animate-[breathe_1.5s_ease-in-out_infinite]'>
               Updating...
             </span>
