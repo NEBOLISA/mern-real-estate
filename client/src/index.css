@@ -2,3 +2,11 @@
 body {
   background-color: rgb(241, 245, 241);
 }
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}

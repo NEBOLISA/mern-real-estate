@@ -15,6 +15,9 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String
     },
+    avatarPublicId: {
+      type: String
+    },
     password: {
       type: String,
       required: false

@@ -21,6 +21,7 @@ export const signUp = async (req, res, next) => {
             provider: "local",
             avatar: null,
             providerId: null,
+            avatarPublicId: null,
             password: hashedPassword
         })
         await newUser.save()
@@ -76,7 +77,8 @@ export const googleAuth = async(req, res, next) => {
           name,
           avatar,
           provider: 'google',
-          providerId,
+            providerId,
+          avatarPublicId: null,
           password: null
         })
         generateAndSendToken(user, 200, res)
@@ -85,7 +87,18 @@ export const googleAuth = async(req, res, next) => {
         next(error)
     }
 }
-
+export const signOut = async (req, res, next) => {
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            expires: new Date(0),
+            sameSite: "strict"
+         }).status(200).json({ message: "User signed out successfully" })
+     } catch (error) {
+         next(error)
+      }
+}
 const generateAndSendToken = (user, statusCode, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" })
     const {password: _, ...userData} = user._doc

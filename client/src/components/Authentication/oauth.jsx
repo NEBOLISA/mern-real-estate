@@ -27,8 +27,18 @@ function OAuth() {
         }
     }
   return (
-    <button type="button" onClick={handleGoogleAuth} className='bg-red-700 uppercase text-white p-3 rounded-lg hover:opacity-95 w-full mt-3 cursor-pointer'>
-      continue with google
+    <button
+      type='button'
+      onClick={handleGoogleAuth}
+      className='bg-red-700 flex items-center justify-center gap-3 uppercase text-white p-3 rounded-lg hover:opacity-95 w-full mt-3 cursor-pointer'
+    >
+      <span>continue with google</span>
+      <img
+        src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiEndPkpxU-FDOQK0acJ6iuFECTI914xOelQ&s'
+        alt='google logo'
+        srcset=''
+        className='rounded-full w-6 h-6 object-cover'
+      />
     </button>
   )
 }

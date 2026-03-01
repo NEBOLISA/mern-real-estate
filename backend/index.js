@@ -31,7 +31,7 @@ app.use(
   })
 )
 app.use('/api/auth', authRouter)
-app.use("/api/auth/user",userRouter)
+app.use("/api/users",userRouter)
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500

@@ -5,7 +5,7 @@ import { useUser } from '../hooks/useUser'
 function Header() {
   const { data: userData } = useUser()
   const { user } = userData || {}
- 
+ console.log({user})
   return (
     <header className='bg-slate-200 shadow-md '>
       <div className='flex justify-between mx-auto items-center max-w-5xl p-3'>
