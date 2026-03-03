@@ -5,7 +5,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
-const ConfirmDialog = ({ open, handleClose, confirmAction}) => {
+const ConfirmDialog = ({ open, handleClose, confirmAction, promptText  }) => {
   return (
     <Dialog
       open={open}
@@ -15,8 +15,13 @@ const ConfirmDialog = ({ open, handleClose, confirmAction}) => {
     >
       {/* <DialogTitle id='alert-dialog-title'>Logout</DialogTitle> */}
       <DialogContent>
-        <DialogContentText fontSize={18} color='black' id='alert-dialog-description'>
-          Are you sure you want to logout?
+        <DialogContentText
+          fontSize={18}
+          color='black'
+                  id='alert-dialog-description'
+             
+        >
+          {promptText}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

@@ -40,3 +40,15 @@ export const getRequest = async (url,credentials="include") => {
     }
     return result
 }
+
+export const deleteRequest = async (url) => {
+    const res = await fetch(url, {
+        method: 'DELETE',
+        credentials: 'include'
+    })
+    const result = await res.json()
+    if (!res.ok) {
+        throw new Error(result.message || 'Something went wrong')
+    }
+    return result
+}

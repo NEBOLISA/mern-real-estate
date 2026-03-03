@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getRequest, putRequest } from "../lib/api";
+import { deleteRequest, getRequest, putRequest } from "../lib/api";
 
 export const useUser = () => {
     return useQuery({
@@ -14,7 +14,7 @@ export const useUpdateUser = () => {
       mutationFn: async (data) => {
          
       return await putRequest(
-        `http://localhost:3000/api/users/me`,
+        `http://localhost:3000/api/users/me/update-user`,
         data,
         'file'
       )
@@ -27,3 +27,19 @@ export const useUpdateUser = () => {
   
   },)
 }
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async () => {
+      return await deleteRequest(
+        `http://localhost:3000/api/users/me/delete`
+      )
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['user']
+      })
+    }
+  })
+} 

@@ -4,6 +4,7 @@ import { useSignIn } from '../hooks/useSignIn'
 import InputForm from '../components/Authentication/input-component'
 import { Link, useNavigate } from 'react-router-dom'
 import OAuth from '../components/Authentication/oauth'
+import { toast } from 'react-toastify'
 
 
 function SignIn() {
@@ -23,7 +24,9 @@ function SignIn() {
        
        navigate("/")
       },
-      
+      onError: (error) => {
+        toast.error(error.message)
+      }
       
     })
   }

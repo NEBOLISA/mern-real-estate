@@ -4,12 +4,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import InputForm from '../components/Authentication/input-component'
 import { useSignUp } from '../hooks/useSignUp'
 import OAuth from '../components/Authentication/oauth'
+import { toast } from 'react-toastify'
 
 function SignUp() {
   const [formData, setFormData] = useState({})
  
   // eslint-disable-next-line no-unused-vars
-  const [error, setError] = useState(null)
+
   const signUpMutation = useSignUp()
   const handleChange = (e) => {
     setFormData({
@@ -20,39 +21,14 @@ function SignUp() {
   const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault()
-    // try {
-    //   setIsLoading(true)
-    //   const res = await fetch('/api/auth/sign-up', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(formData)
-    //   })
 
-    //   const data = await res.json()
-     
-    //   if (data.success === false) {
-    //     setError(data.message)
-    //     setIsLoading(false)
-    //     return
-    //   }
-    //   setIsLoading(false)
-    //   setError(null)
-    //   navigate('/sign-in')
-    // } catch (error) {
-    //   setIsLoading(false)
-    //   console.log(error.message)
-    // } finally {
-    //   setIsLoading(false)
-    // }
     
     signUpMutation.mutate(formData, {
       onSuccess: () => {
         navigate('/sign-in')
       },
       onError: (error) => {
-        setError(error.message)
+        toast.error(error.message)
         if (error.message.includes("User already exists")) {
           setTimeout(() => {
             navigate('/sign-in')

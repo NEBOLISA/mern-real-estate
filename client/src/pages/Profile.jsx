@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useUpdateUser, useUser } from '../hooks/useUser'
+import { useDeleteUser, useUpdateUser, useUser } from '../hooks/useUser'
 import axios from 'axios'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -12,14 +12,17 @@ function Profile() {
   const { data: userData } = useUser()
  
   const updateMutation = useUpdateUser()
-  const { isPending } = updateMutation
+  const { isPending: isUpdating } = updateMutation
+  const deletemutation = useDeleteUser()
+  const { isPending: isDeleting } = deletemutation
   //const [isUploadingDone, setIsUploadingDone] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [updateForm, setUpdateForm] = useState({})
   const [photoFile, setPhotoFile] = useState(null)
   const [previewImage, setPreviewImage] = useState(null)
-  const [openDialog, setOpenDialog] = useState(false)
+  const [openLogoutDialog, setOpenLogoutDialog] = useState(false)
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
 const queryClient = useQueryClient()
   const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
@@ -36,15 +39,23 @@ const queryClient = useQueryClient()
       [id]: value
     })
   }
+  const handleDeleteAccount = () => {
+    deletemutation.mutate(null, {
+      onSuccess: () => {
+        toast.success("Account deleted successfully")
+        navigate('/sign-up')
+      },
+      onError: (error) => {
+        toast.error(error.message || "Failed to delete account")
+        console.log(error.message)
+      }
+    })
+  }
   const displayMessage = (formFields) => {
     const filteredFields = Object.keys(formFields).filter(field => field !== "publicId")
     if (filteredFields.includes("password") && filteredFields.includes("email") && filteredFields.includes("name") && filteredFields.includes("avatar")) {
       return toast.success("Profile updated successfully")
     }
-    // if(Object.keys(formFields).length === 0 && photoFile) {
-    //   return toast.success("Avatar updated successfully")
-
-    // }
     if (Object.keys(filteredFields).length === 1) {
       const fieldName = filteredFields[0].charAt(0).toUpperCase() + filteredFields[0].slice(1)
       return toast.success(`${fieldName} updated successfully`)
@@ -181,8 +192,11 @@ const queryClient = useQueryClient()
   //     }
 
   // }
-  const handleDialogOpen =  () => { 
-    setOpenDialog(true)
+  const handleLogOutDialogOpen =  () => { 
+    setOpenLogoutDialog(true)
+  }
+  const handleDeleteDialogOpen = () => {
+    setOpenDeleteDialog(true)
   }
   const handleSignOut = async () => { 
     try {
@@ -233,7 +247,7 @@ const queryClient = useQueryClient()
       <h2 className='text-center text-green-600 my-3 text-sm'>
         {uploadProgress > 0 && `${uploadProgress}%`}
       </h2>
-      
+
       <form onSubmit={handleFormSubmit} className='w-full'>
         <input
           type='text'
@@ -267,9 +281,10 @@ const queryClient = useQueryClient()
         )}
         <button
           type='submit'
+          disabled={isUploading || isUpdating}
           className='bg-slate-700 w-full mt-5 cursor-pointer text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
         >
-          {isUploading || isPending ? (
+          {isUploading || isUpdating ? (
             <span className='animate-[breathe_1.5s_ease-in-out_infinite]'>
               Updating...
             </span>
@@ -287,13 +302,20 @@ const queryClient = useQueryClient()
       <div className='flex  justify-between w-full mt-5'>
         <button
           type='button'
+          onClick={handleDeleteDialogOpen}
           className=' w-max cursor-pointer  text-red-800  hover:text-red-700'
         >
-          Delete Account
+          {isDeleting ? (
+            <p className='animate-[breathe_1.5s_ease-in-out_infinite]'>
+              Deleting...{' '}
+            </p>
+          ) : (
+            'Delete Account'
+          )}
         </button>
         <button
           type='button'
-          onClick={handleDialogOpen}
+          onClick={handleLogOutDialogOpen}
           className=' w-max cursor-pointer  text-red-800   hover:text-red-700'
         >
           Sign Out
@@ -306,9 +328,16 @@ const queryClient = useQueryClient()
         Show Listings
       </button>
       <ConfirmDialog
-        open={openDialog}
-        handleClose={() => setOpenDialog(false)}
+        open={openLogoutDialog}
+        handleClose={() => setOpenLogoutDialog(false)}
         confirmAction={handleSignOut}
+        promptText={"Are you sure you want to sign out?"}
+      />
+      <ConfirmDialog
+        open={openDeleteDialog}
+        handleClose={() => setOpenDeleteDialog(false)}
+        confirmAction={handleDeleteAccount}
+        promptText={"Are you sure you want to delete your account? This action cannot be undone."}
       />
     </div>
   )

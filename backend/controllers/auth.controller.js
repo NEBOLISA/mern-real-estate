@@ -92,7 +92,7 @@ export const signOut = async (req, res, next) => {
         res.clearCookie("token", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            expires: new Date(0),
+            
             sameSite: "strict"
          }).status(200).json({ message: "User signed out successfully" })
      } catch (error) {

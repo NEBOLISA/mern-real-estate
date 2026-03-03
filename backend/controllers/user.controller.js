@@ -67,7 +67,37 @@ export const updateUser = async (req, res,next) => {
     next(error)
   }
 }
-
+export const deleteUser = async (req, res, next) => {
+  try {
+    const id = req.userId
+    if (!id) {
+      throw errorHandler(401, 'Unauthorized')
+    }
+    const user = await User.findById(id)
+    if (!user) {
+      throw errorHandler(404, 'User not found')
+    }
+    if (user.avatarPublicId) {
+      try {
+        await cloudinary.uploader.destroy(user.avatarPublicId)
+      } catch (err) {
+        console.log('Avatar deletion failed:', err.message)
+      }
+    }
+    await User.findByIdAndDelete(id)
+      res
+        .clearCookie('token', {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict'
+        })
+        .status(200)
+        .json({ message: 'User deleted successfully' })
+        
+  } catch (error) {
+    next(error)
+  }
+}
 // export const updateAvatar = async (req, res, next) => {
 //   try {
 //     const id = req.userId
