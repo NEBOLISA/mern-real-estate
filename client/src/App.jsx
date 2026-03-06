@@ -8,6 +8,7 @@ import Header from './components/Header'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import CreateListing from './pages/CreateListing'
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,7 @@ function App() {
         <Route path='/' element={<Home />} />
          <Route element={<ProtectedRoutes />}>
           <Route path='/profile' element={<Profile />} />
+          <Route path='/create-listing' element={<CreateListing />} />
          </Route>
      
 

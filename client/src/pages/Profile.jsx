@@ -293,6 +293,7 @@ const queryClient = useQueryClient()
           )}
         </button>
         <button
+          onClick={() => navigate('/create-listing')}
           type='button'
           className='bg-green-700 w-full mt-3 cursor-pointer text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
         >

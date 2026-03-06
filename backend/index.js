@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
+import listingRouter from './routes/listing.route.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import errorMiddleware from './middleware/errorMiddleware.js'
@@ -33,5 +34,5 @@ app.use(
 )
 app.use('/api/auth', authRouter)
 app.use("/api/users",userRouter)
-
+app.use("/api/listings", listingRouter)
 app.use(errorMiddleware)
