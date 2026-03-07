@@ -4,8 +4,8 @@ import { createListing, deleteListing, getListing, getListings, updateListing } 
 import multer from 'multer'
 const router = express.Router()
 const storage = multer.memoryStorage()
-const upload = multer({ storage })
-router.post("/", verifyToken, upload.single('imageUrl'), createListing)
+const upload = multer({ storage, limits: { files: 6 } })
+router.post("/", verifyToken, upload.array('images', 6), createListing)
 router.get("/", getListings)
 router.get("/:id", getListing)
 router.put("/:id", verifyToken, updateListing)
