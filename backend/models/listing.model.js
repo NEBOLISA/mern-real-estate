@@ -8,7 +8,7 @@ const listingSchema = new moongose.Schema(
       required: true
     },
     name: { type: String, required: true },
-    description: { type: String },
+    description: { type: String, required: true },
     address: { type: String, required: true },
     sellOrRent: { type: String, enum: ['sell', 'rent'], default: 'rent' },
     furnished: { type: Boolean, default: false },
@@ -18,8 +18,8 @@ const listingSchema = new moongose.Schema(
     baths: { type: Number, default: 1 },
     regularPrice: { type: Number, required: true },
     discountedPrice: { type: Number, default: 0 },
-    imageUrl: { type: String, required: true },
-    imagePublicId: { type: String, required: true }
+    images: [{url: String, publicId: String }],
+
   },
   { timestamps: true }
 )
