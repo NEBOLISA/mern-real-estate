@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useListing } from '../hooks/useListing'
 import { toast } from 'react-toastify'
 
+
 const CreateListing = () => {
   const [listingValues, setListingValues] = useState({
     name: '',
@@ -15,9 +16,9 @@ const CreateListing = () => {
     baths: 1,
     discountedPrice: 0,
     regularPrice: 0,
-    imageUrl: ''
+    images: []
   })
-  const [fileName, setFileName] = useState(null)
+  const [filesName, setFilesName] = useState([])
   const listingMutation = useListing()
   const { isPending} = listingMutation
   const handleChange = (e,value) => {
@@ -27,16 +28,21 @@ const CreateListing = () => {
   }
   const handleFormSubmit = (e) => {
     e.preventDefault()
-    if (!listingValues.name || !listingValues.address || !listingValues.regularPrice || !listingValues.imageUrl) {
+    console.log({listingValues})
+    if (!listingValues.name || !listingValues.address || !listingValues.regularPrice || listingValues.images.length === 0) {
       toast.error("Name, address, regular price and image are required")
       return
     }
     const formData = new FormData()
     e.preventDefault()
     Object.entries(listingValues).forEach(([key, value]) => {
-      formData.append(key, value)
+     
+      key !== "images" && formData.append(key, value)
     })
-
+    listingValues.images.forEach((image) => {
+      formData.append("images", image)
+    })
+   
   listingMutation.mutate(formData, {
     onSuccess: () => {
      toast.success("Listing created successfully")
@@ -52,9 +58,9 @@ const CreateListing = () => {
       baths: 1,
       discountedPrice: 0,
       regularPrice: 0,
-      imageUrl: ''
+      images: []
      })
-     setFileName(null)
+     setFilesName([])
     },
     onError: (error) => {
      
@@ -64,11 +70,20 @@ const CreateListing = () => {
   }
   const handleImageSelect = (e) => {
     const file = e.target.files[0]
-    setFileName(file.name)
+   if (listingValues.images.length >= 6) {
+    toast.error("You can upload a maximum of 6 images")
+    return
+   }
+    listingValues.images.push(file)
+   
+    const previewUrl = URL.createObjectURL(file)
+    setFilesName((prev) =>[...prev,{  previewUrl }])
+    
+  
  
-    if (file) {
-      setListingValues({ ...listingValues, imageUrl: file })
-    }
+    // if (file) {
+    //   setListingValues({ ...listingValues, images: file })
+    // }
   }
   return (
     <div className='lg:mx-auto mx-8 max-w-4xl my-6'>
@@ -240,19 +255,31 @@ const CreateListing = () => {
                 id='file'
               />
 
-              {fileName ? (
-                <h3 className='truncate w-[60%]'>{fileName}</h3>
-              ) : (
-                <h3>No file chosen</h3>
-              )}
+              { filesName.length === 0 && <h3>No file chosen</h3>}
             </div>
             <button className='text-green-600 p-3 cursor-pointer hover:shadow-md  border border-green-600 uppercase  '>
               Upload
             </button>
           </div>
+         {filesName.length > 0 && <div className='flex flex-wrap gap-4 flex-row space-y-3 mt-4'>
 
+          {filesName.map((file, index) => (
+            <div key={index} className=' w-max h-max flex flex-col items-center'>
+             
+                <img
+                  src={file.previewUrl}
+                  className='w-15 h-15 object-cover'
+                  alt=''
+                  loading='lazy'
+                />
+                {/* <p className='truncate w-[60%]'>{file.name}</p> */}
+            
+            </div>
+          ))}
+          </div>}
           <button
             type='submit'
+            disabled={isPending}
             className='bg-gray-700 text-white w-full mt-6 py-3 px-4 rounded-lg hover:bg-gray-600 cursor-pointer uppercase   h-max'
           >
             {isPending ? (
